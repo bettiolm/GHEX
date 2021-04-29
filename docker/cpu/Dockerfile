@@ -98,3 +98,17 @@ RUN cd /tmp && \
 
 ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 ENV UCX_TLS=self,tcp
+
+RUN cd /tmp && \
+    wget -q http://glaros.dtc.umn.edu/gkhome/fetch/sw/parmetis/parmetis-4.0.3.tar.gz && \
+    tar xzf parmetis-4.0.3.tar.gz && \
+    cd parmetis-4.0.3 && \
+    sed -i 's/#define IDXTYPEWIDTH 32/#define IDXTYPEWIDTH 64/g' metis/include/metis.h && \
+    cd metis && \
+    make config shared=1 prefix=/opt/metis/ && \
+    make install && \
+    cd .. && \
+    make config shared=1 prefix=/opt/parmetis/ && \
+    make install && \
+    cd /tmp && \
+    rm -rf parmetis-4.0.3.tar.gz parmetis-4.0.3
